@@ -1,134 +1,89 @@
-import csv
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
-species_mapping =           ['Acer_Opalus', 
-                            'Pterocarya_Stenoptera', 
-                            'Quercus_Hartwissiana', 
-                            'Tilia_Tomentosa', 
-                            'Quercus_Variabilis', 
-                            'Magnolia_Salicifolia', 
-                            'Quercus_Canariensis', 
-                            'Quercus_Rubra', 
-                            'Quercus_Brantii', 
-                            'Salix_Fragilis', 
-                            'Zelkova_Serrata', 
-                            'Betula_Austrosinensis', 
-                            'Quercus_Pontica', 
-                            'Quercus_Afares', 
-                            'Quercus_Coccifera', 
-                            'Fagus_Sylvatica', 
-                            'Phildelphus', 
-                            'Acer_Palmatum', 
-                            'Quercus_Pubescens', 
-                            'Populus_Adenopoda', 
-                            'Quercus_Trojana', 
-                            'Alnus_Sieboldiana', 
-                            'Quercus_Ilex', 
-                            'Arundinaria_Simonii', 
-                            'Acer_Platanoids', 
-                            'Quercus_Phillyraeoides', 
-                            'Cornus_Chinensis', 
-                            'Liriodendron_Tulipifera', 
-                            'Cytisus_Battandieri', 
-                            'Rhododendron_x_Russellianum', 
-                            'Alnus_Rubra', 
-                            'Eucalyptus_Glaucescens', 
-                            'Cercis_Siliquastrum', 
-                            'Cotinus_Coggygria', 
-                            'Celtis_Koraiensis', 
-                            'Quercus_Crassifolia', 
-                            'Quercus_Kewensis', 
-                            'Cornus_Controversa', 
-                            'Quercus_Pyrenaica', 
-                            'Callicarpa_Bodinieri', 
-                            'Quercus_Alnifolia', 
-                            'Acer_Saccharinum', 
-                            'Prunus_X_Shmittii', 
-                            'Prunus_Avium', 
-                            'Quercus_Greggii', 
-                            'Quercus_Suber', 
-                            'Quercus_Dolicholepis', 
-                            'Ilex_Cornuta', 
-                            'Tilia_Oliveri', 
-                            'Quercus_Semecarpifolia', 
-                            'Quercus_Texana', 
-                            'Ginkgo_Biloba', 
-                            'Liquidambar_Styraciflua', 
-                            'Quercus_Phellos', 
-                            'Quercus_Palustris', 
-                            'Alnus_Maximowiczii', 
-                            'Quercus_Agrifolia', 
-                            'Acer_Pictum',
-                            'Acer_Rufinerve', 
-                            'Lithocarpus_Cleistocarpus', 
-                            'Viburnum_x_Rhytidophylloides', 
-                            'Ilex_Aquifolium', 
-                            'Acer_Circinatum', 
-                            'Quercus_Coccinea', 
-                            'Quercus_Cerris', 
-                            'Quercus_Chrysolepis', 
-                            'Eucalyptus_Neglecta', 
-                            'Tilia_Platyphyllos', 
-                            'Alnus_Cordata', 
-                            'Populus_Nigra', 
-                            'Acer_Capillipes', 
-                            'Magnolia_Heptapeta', 
-                            'Acer_Mono', 
-                            'Cornus_Macrophylla', 
-                            'Crataegus_Monogyna', 
-                            'Quercus_x_Turneri', 
-                            'Quercus_Castaneifolia', 
-                            'Lithocarpus_Edulis', 
-                            'Populus_Grandidentata', 
-                            'Acer_Rubrum', 
-                            'Quercus_Imbricaria', 
-                            'Eucalyptus_Urnigera', 
-                            'Quercus_Crassipes', 
-                            'Viburnum_Tinus', 
-                            'Morus_Nigra', 
-                            'Quercus_Vulcanica', 
-                            'Alnus_Viridis', 
-                            'Betula_Pendula', 
-                            'Olea_Europaea', 
-                            'Quercus_Ellipsoidalis', 
-                            'Quercus_x_Hispanica', 
-                            'Quercus_Shumardii', 
-                            'Quercus_Rhysophylla', 
-                            'Castanea_Sativa', 
-                            'Ulmus_Bergmanniana', 
-                            'Quercus_Nigra', 
-                            'Salix_Intergra', 
-                            'Quercus_Infectoria_sub', 
-                            'Sorbus_Aria']
+def plot_classes_distribution(classes:list, samples:list) -> None:
+    """ Plots the number of sample in each classes """
+    nb_classes = len(classes)
+    counts = np.zeros(nb_classes)
 
-def read_data_from_csv():
-    data = []
-    with open('data\\train.csv', newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if row[0] != 'id':
-                species = species_mapping.index(row[1])
-                row[1] = species
-                data.append(row)
+    for i in range(0, nb_classes):
+        counts[i] = np.sum(samples == i)
+    avg = counts.mean()
+    std = counts.std()
 
-    return np.array(data, dtype=np.float32)
-pass
+    # Plotting
+    plt.figure(figsize=(10,8))
 
-def read_dataset(label_has_onehot = False):
-    data = read_data_from_csv()
-    x = data[:,2:]
+    plt.bar(classes, counts, width=1.5)
+    plt.axhline(avg, color = 'black', linewidth = 2)
+    plt.axhline(avg+std, color = 'green', linewidth = 2)
+    plt.axhline(avg-std, color = 'green', linewidth = 2)
+    plt.xlabel("Classes")
+    plt.ylabel("Nombre de données")
 
-    if label_has_onehot:
-        y = []
-        for i in range(0,len(data)):
-            species = data[i,1]
-            onehot = np.zeros(len(species_mapping), dtype=np.int32)
-            onehot[int(species)] = 1
-            y.append(onehot)
+    plt.show()
+    pass
 
-        y = np.array(y, dtype=np.int32)
-    else:
-        y = np.array(data[:,1], dtype=np.int32)
+class Dataset:
+    """ Class to hold and manage the data
+        
+        Variables:
+            filepath:   path of the csv file containing the data
+            data:       data loaded from the csv as a DataFrame
+            classes:    list of all the classes in the dataset
+            nb_classes: nb of classes (length of 'classes')
 
-    return x, y
-pass
+            x_train:    list of the samples in the training set
+            t_train:    list of the label of each sample in the training set
+            id_train:   list of the id of each sample in the training set
+
+            x_test:    list of the samples in the testing set
+            t_test:    list of the label of each sample in the testing set
+            id_test:   list of the id of each sample in the testing set
+    """
+    def __init__(self, filepath:str) -> None:
+        self.filepath = filepath
+        self.__load_data__()
+        pass
+
+    def __load_data__(self) -> None:
+        self.data = pd.read_csv(self.filepath)
+
+        # Convert species name to int
+        le = LabelEncoder().fit(self.data.species)
+        self.data.insert(2, 'label', le.transform(self.data.species), True)
+
+        # Save a list of classes
+        self.classes = le.classes_
+        self.nb_classes = len(self.classes)
+        pass
+
+    def split_data(self, test_size:float, seed:int=0, stratified:bool=False) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+        samples = self.data.drop(['id', 'species', 'label'], axis=1).to_numpy()
+        labels = self.data['label'].to_numpy()
+        ids = self.data['id'].to_numpy()
+
+        if stratified:
+            sets = train_test_split(samples, labels, ids, test_size=test_size, random_state=seed, shuffle=True, stratify=labels)
+        else:
+            sets = train_test_split(samples, labels, ids, test_size=test_size, random_state=seed, shuffle=True)
+        
+        self.x_train = sets[0]
+        self.t_train = sets[2]
+        self.id_train = sets[4]
+
+        self.x_test = sets[1]
+        self.t_test = sets[3]
+        self.id_test = sets[5]
+
+        return self.x_train, self.t_train, self.x_test, self.t_test
+        pass
+
+    def plot_classes_distribution(self) -> None:
+        class_labels = np.arange(0, self.nb_classes)
+        plot_classes_distribution(class_labels, self.t_train)
+        plot_classes_distribution(class_labels, self.t_test)
+        pass
