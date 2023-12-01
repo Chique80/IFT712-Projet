@@ -5,24 +5,15 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
 
-def display_reports(reports:pd.DataFrame) -> None:
-    x = np.arange(0, len(reports.classes))
-
-    plt.figure(figsize=(20,20))
-
-    bar_width = 0.25
-    multiplier = 0
-    for column in reports.columns[1:]:
-        offset = bar_width * multiplier
-        plt.bar(x + offset, reports[column]*100, bar_width, label = column)
-        multiplier += 1
-
-    plt.ylim(0, 105)
-    plt.show()
+def display_evaluation_reports(reports:pd.DataFrame) -> None:
+    print('f1_score  : {:.4} ± {:.4}'.format(reports.f1_score.mean(), reports.f1_score.std()))
+    print('precision : {:.4} ± {:.4}'.format(reports.precision.mean(), reports.precision.std()))
+    print('recall    : {:.4} ± {:.4}'.format(reports.recall.mean(), reports.recall.std()))
+    reports.boxplot(column=['f1_score', 'precision', 'recall'], figsize=(8,5), notch=1)
     pass
 
-def evaluate(targets:list, predictions:list, labels:list, log:bool=True) -> (float, pd.DataFrame):
-    """ Evaluate a predictions using various metrics """
+def evaluate_predictions(targets:list, predictions:list, labels:list, log:bool=True) -> (float, pd.DataFrame):
+    """ Evaluate a list predictions using various metrics """
     acc = accuracy_score(targets, predictions)
 
     reports = pd.DataFrame(index=labels)
@@ -38,10 +29,7 @@ def evaluate(targets:list, predictions:list, labels:list, log:bool=True) -> (flo
 
     if log:
         print('Accuracy  : {:.4%}'.format(acc))
-        print('f1_score  : {:.4} ± {:.4}'.format(reports.f1_score.mean(), reports.f1_score.std()))
-        print('precision : {:.4} ± {:.4}'.format(reports.precision.mean(), reports.precision.std()))
-        print('recall    : {:.4} ± {:.4}'.format(reports.recall.mean(), reports.recall.std()))
-        reports.boxplot(column=['f1_score', 'precision', 'recall'], figsize=(8,5), notch=1)
+        display_evaluation_reports(reports)
 
     return acc, reports
     pass
