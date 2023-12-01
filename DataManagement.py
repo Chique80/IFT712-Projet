@@ -120,6 +120,8 @@ class Dataset:
         self.x_test = sets[1]
         self.t_test = sets[3]
         self.id_test = sets[5]
+        print(self.x_train.shape,self.x_test.shape)
+
 
         return self.x_train, self.t_train, self.x_test, self.t_test
         pass
