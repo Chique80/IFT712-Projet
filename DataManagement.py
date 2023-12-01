@@ -3,6 +3,48 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
+
+def display_reports(reports:pd.DataFrame) -> None:
+    x = np.arange(0, len(reports.classes))
+
+    plt.figure(figsize=(20,20))
+
+    bar_width = 0.25
+    multiplier = 0
+    for column in reports.columns[1:]:
+        offset = bar_width * multiplier
+        plt.bar(x + offset, reports[column]*100, bar_width, label = column)
+        multiplier += 1
+
+    plt.ylim(0, 105)
+    plt.show()
+    pass
+
+def evaluate(targets:list, predictions:list, labels:list, log:bool=True) -> (float, pd.DataFrame):
+    """ Evaluate a predictions using various metrics """
+    acc = accuracy_score(targets, predictions)
+
+    reports = pd.DataFrame(index=labels)
+
+    score = f1_score(targets, predictions, average=None)
+    reports['f1_score'] = score
+
+    precision = precision_score(targets, predictions, average=None)
+    reports['precision'] = precision
+
+    recall = recall_score(targets, predictions, average=None)
+    reports['recall'] = recall
+
+    if log:
+        print('Accuracy  : {:.4%}'.format(acc))
+        print('f1_score  : {:.4} ± {:.4}'.format(reports.f1_score.mean(), reports.f1_score.std()))
+        print('precision : {:.4} ± {:.4}'.format(reports.precision.mean(), reports.precision.std()))
+        print('recall    : {:.4} ± {:.4}'.format(reports.recall.mean(), reports.recall.std()))
+        reports.boxplot(column=['f1_score', 'precision', 'recall'], figsize=(8,5), notch=1)
+
+    return acc, reports
+    pass
 
 def plot_classes_distribution(classes:list, samples:list) -> None:
     """ Plots the number of sample in each classes """
@@ -62,9 +104,9 @@ class Dataset:
         pass
 
     def split_data(self, test_size:float, seed:int=0, stratified:bool=False) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
-        samples = self.data.drop(['id', 'species', 'label'], axis=1).to_numpy()
-        labels = self.data['label'].to_numpy()
-        ids = self.data['id'].to_numpy()
+        samples = self.data.drop(['id', 'species', 'label'], axis=1).to_numpy(copy=True)
+        labels = self.data['label'].to_numpy(copy=True)
+        ids = self.data['id'].to_numpy(copy=True)
 
         if stratified:
             sets = train_test_split(samples, labels, ids, test_size=test_size, random_state=seed, shuffle=True, stratify=labels)
@@ -86,4 +128,13 @@ class Dataset:
         class_labels = np.arange(0, self.nb_classes)
         plot_classes_distribution(class_labels, self.t_train)
         plot_classes_distribution(class_labels, self.t_test)
+        pass
+
+    def info(self) -> None:
+        print("##### Informations #####")
+        print("  - Nb classes   :", self.nb_classes, "( Dim :", len(self.data.columns), ")")
+        print("  - Nb samples   :", len(self.data))
+        print("     - Training  :", len(self.x_train), "(", len(self.x_train)/len(self.data)*100, "% )")
+        print("     - Test      :", len(self.x_test), "(", len(self.x_test)/len(self.data)*100, "% )")
+        print("########################")
         pass
