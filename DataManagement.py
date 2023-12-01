@@ -2,37 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
-
-def display_evaluation_reports(reports:pd.DataFrame) -> None:
-    print('f1_score  : {:.4} ± {:.4}'.format(reports.f1_score.mean(), reports.f1_score.std()))
-    print('precision : {:.4} ± {:.4}'.format(reports.precision.mean(), reports.precision.std()))
-    print('recall    : {:.4} ± {:.4}'.format(reports.recall.mean(), reports.recall.std()))
-    reports.boxplot(column=['f1_score', 'precision', 'recall'], figsize=(8,5), notch=1)
-    pass
-
-def evaluate_predictions(targets:list, predictions:list, labels:list, log:bool=True) -> (float, pd.DataFrame):
-    """ Evaluate a list predictions using various metrics """
-    acc = accuracy_score(targets, predictions)
-
-    reports = pd.DataFrame(index=labels)
-
-    score = f1_score(targets, predictions, average=None)
-    reports['f1_score'] = score
-
-    precision = precision_score(targets, predictions, average=None)
-    reports['precision'] = precision
-
-    recall = recall_score(targets, predictions, average=None)
-    reports['recall'] = recall
-
-    if log:
-        print('Accuracy  : {:.4%}'.format(acc))
-        display_evaluation_reports(reports)
-
-    return acc, reports
-    pass
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import f1_score, precision_score, recall_score
 
 def plot_classes_distribution(classes:list, samples:list) -> None:
     """ Plots the number of sample in each classes """
@@ -128,3 +99,71 @@ class Dataset:
         print("     - Test      :", len(self.x_test), "(", len(self.x_test)/len(self.data)*100, "% )")
         print("########################")
         pass
+
+
+def train_model(model, hyperparameters:dict, dataset:Dataset) -> (GridSearchCV, pd.DataFrame):
+    """ Search for the best hyperparameters for the given model and return the results """
+    # Use 5-fold cross validation to find the best hyperparameters
+    grid = GridSearchCV(model, hyperparameters, refit=True, verbose = 1, cv=5)
+    grid.fit(dataset.x_train, dataset.t_train)
+
+    # Format the results into a DataFrame for easy analysis
+    columns = ['param_'+param for param in hyperparameters.keys()]
+    columns.append('mean_test_score')
+    columns.append('rank_test_score')
+    results = pd.DataFrame(grid.cv_results_, columns=columns)
+
+    return grid, results
+    pass
+
+
+def display_evaluation_reports(reports:pd.DataFrame) -> None:
+    print('### Averages ###')
+    print('   - precision : {:.3%} ± {:.3%}'.format(reports.precision.mean(), reports.precision.std()))
+    print('   - recall    : {:.3%} ± {:.3%}'.format(reports.recall.mean(), reports.recall.std()))
+    print('   - f1_score  : {:.3%} ± {:.3%}'.format(reports.f1_score.mean(), reports.f1_score.std()))
+    print('################')
+    reports.boxplot(column=['precision', 'recall', 'f1_score'], figsize=(8,5))
+    pass
+
+
+def evaluate_predictions(targets:list, predictions:list, labels:list, log:bool=True) -> pd.DataFrame:
+    """ Evaluate a list predictions using various metrics """
+    reports = pd.DataFrame(index=labels)
+
+    precision = precision_score(targets, predictions, average=None)
+    reports['precision'] = precision
+
+    recall = recall_score(targets, predictions, average=None)
+    reports['recall'] = recall
+
+    score = f1_score(targets, predictions, average=None)
+    reports['f1_score'] = score
+
+    if log:
+        display_evaluation_reports(reports)
+
+    return reports
+    pass
+
+def extract_bad_predictions(targets:list, predictions:list, labels:list=None, ids:list=None) -> pd.DataFrame:
+    """ Extract all the wrong predictions and place them inside a dataframe """
+    bad_preds = targets != predictions      # Mask for bad predictions
+
+    bad_preds_true = targets[bad_preds]
+    bad_preds_predicted = predictions[bad_preds]
+
+    df = pd.DataFrame()
+
+    if labels is None:
+        df['True Class'] = bad_preds_true
+        df['Predicted Class'] = bad_preds_predicted
+    else:
+        df['True Class'] = labels[bad_preds_true]
+        df['Predicted Class'] = labels[bad_preds_predicted]
+    
+    if ids is not None:
+        df['Sample ID'] = ids[bad_preds]
+
+    return df
+    pass
