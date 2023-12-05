@@ -130,6 +130,90 @@ En conclusion, la régression logistique s'est révélée être une approche rob
 \subsection{Classifieur AdaBoost}
 
 \subsection{Arbre de décisions}
+Le cinquième modèle que nous avons choisi d’utiliser est l'arbre de décision. Il s'agit d'une méthode de modélisation qui prend des décisions selon une structure arborescente. Les arbres de décision sont conçus pour résoudre des problèmes de classification avec plusieurs classes, comme dans notre cas. Cette approche est particulièrement adaptée pour diviser l'espace des caractéristiques en régions, en prenant des décisions basées sur des seuils dans les caractéristiques. Les arbres de décision sont largement utilisés dans la classification en raison de leur capacité à capturer des relations complexes entre les caractéristiques et la classe cible.
+\par
+Les hyperparamètres que nous avons choisi d’optimiser sont les suivants : 
+- La profondeur maximale de l'arbre (max\_depth). Chaque niveau de profondeur correspond à une séparation supplémentaire des données en sous-groupes. Une profondeur à None indique qu'il n'y a pas de restriction sur celle-ci.
+- Le nombre minimal d'échantillons requis dans un nœud pour qu’il soit divisé (min\_samples\_split).
+- Le critère de qualité de la division (criterion), qui peut être ‘gini’, ‘entropy’ ou ‘log\_loss’ .
+- La stratégie de division aux noeuds (splitter), qui peut être ‘best’ ou ‘random’.
+\par
+Bien que la profondeur maximale soit souvent l'hyperparamètre le plus crucial dans les arbres de décisions, nous explorons également l'impact des autres hyperparamètres sur les performances du modèle.
+\par
+Pour le critère de qualité, nous avons fait le choix de tester les 3 types disponibles, avec ‘gini’ qui se base sur la mesure d’impureté des classes dans un nœud, ‘entropy’ qui mesure l’information contenue dans un nœud et ‘log\_loss’ qui calcule des pertes logarithmiques. De même pour la stratégie de division aux nœuds : le splitter de type ‘best’ choisit la division qui maximise la mesure définie par le critère de qualité choisi, alors que ‘random’ choisi une division parmi un ensemble aléatoire de divisions possibles, sans forcément évaluer toutes les possibilités. 
+\par
+Concernant la profondeur maximale de l’arbre, nous avons procédé comme pour d’autres modèles, où nous avons effectué des tests à tâtons pour observer quelles plages de valeurs seraient intéressantes à tester lors de la recherche d’hyperparamètres. Après quelques essais, les valeurs intéressantes semblent se trouver à partir d’une profondeur proche de la centaine, allant jusqu’au millier. Également, nous avons intégré la profondeur ‘None’, indiquant une non-restriction sur la profondeur.
+\par
+Pour le min\_samples\_split, nous avons procédé de même, en remarquant que les valeurs revenant le plus souvent dans les meilleurs modèles étaient soit 2 ou 5.
+\par
+Après avoir effectué la recherche des meilleurs hyperparamètres, la meilleure combinaison pour l’entraînement obtenue est la suivante : max\_depth = None, min\_samples\_split = 5 et criterion  = ‘gini’ et splitter = ‘random’ avec un score de précision de 0.615.
+\par
+Pour la profondeur maximale des arbres, on constate que l'absence de limite de profondeur (None) semble donc être préférable. Cela suggère que permettre aux arbres de se développer sans restriction de profondeur donne de meilleurs résultats dans ce contexte. Il est important de rappeler qu’il ne s’agit que des données d’entraînement, donc il est assez normal qu’avec cette liberté au niveau de la profondeur, le modèle s’ajuste le mieux aux données d’entraînement. De plus, cela fait d’autant plus sens au vu de la grande quantité de classes que notre jeu de données possède.
+\par
+On peut examiner les performances du modèle en considérant le score associé à cette limite de profondeur et évaluer l'influence des autres hyperparamètres sur ces résultats :
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{courbe_dt.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
+D’abord, nous pouvons rapidement observer que plus le nombre minimal d'échantillons requis dans un nœud pour qu’il soit divisé augmente, moins le modèle est performant. Il est assez simple d’expliquer cela, en effet si on augmente cette valeur, le modèle est contraint de créer des divisions dans les nœuds uniquement s'il y a un nombre relativement élevé d'échantillons dans ces nœuds. Cela peut conduire à un arbre de décision moins profond et plus généralisé, car les divisions ne sont autorisées que lorsque le modèle détecte des schémas plus forts dans les données. De plus, par rapport à notre jeu de donnée, cela peut clairement impacter les faibles différenciations pouvant exister entre certaines des 99 classes présentes, et donc faire chuter les performances du modèle. 
+\par
+Concernant la stratégie de division aux nœuds, la ‘best’ paraît être la meilleure en moyenne, par rapport à la stratégie ‘random’, qui arrive cependant parfois à obtenir de meilleurs résultats. Cela s’explique simplement par la nature de ces stratégies : le splitter ‘best’ va systématiquement choisir la division la plus bénéfique en termes de critère de qualité, alors que le random va parfois être chanceux sur ses choix de division, expliquant sa supériorité en performances par moment, mais en moyenne ses résultats seront plus faibles. 
+\par
+Enfin, nous observons que le critère de division donnant les meilleurs résultats paraît être ‘gini’, malgré le fait que les autres critères possèdent des performances assez proches. D’après la littérature, le critère ‘gini’ est surtout privilégié pour alléger les temps de calculs qu’induisent les méthodes ‘entropy’ et ‘log\_loss’. Dans notre cas en particulier, le choix de ce paramètre ne possède d’impact important sur les performances du modèle.
+\par
+Pour réellement mesurer les performances du meilleur modèle sur l’ensemble d’entraînement, nous l’évaluons sur un ensemble de test composé de données que le modèle n’a jamais rencontré. Voici les valeurs moyennes des métriques de performances obtenues pour chaque classe : \\ 
+\par
+- precision : 71.125\%$ \pm 14.766\%$ \\
+- recall    : 66.33.\%$ \pm 16.682\%$ \\
+- f1\_score  : 66.365\%$ \pm 13.945\%$ \\
+
+   
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{boxplot\_dt.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
+
+D’abord, nous remarquons que les métriques de performances sont assez faibles, entre 66 et $72\%$, distantes de l’intervalle des $85-100\%$ qui caractérise les bonnes performances d’un modèle.
+Ces observations se traduisent sur la forme des boxplots tracés, où l’écart inter-quartile est très prononcé, de l’ordre de 0.5 pour la précision et le recall et 0.35 pour le f1\_score, traduisant de nombreuses erreurs de prédiction. De plus, les extrémités des boxplots s’étendent sur l’entièreté de l’intervalle [0 ; 1]. 
+\par
+Cependant, le point positif à retirer de ces résultats est que l’on a obtenu de meilleures performances sur l’ensemble de test comparativement aux résultats sur les données d’entraînement. 
+\par
+Il existe donc beaucoup de classes pour lesquelles le modèle a moins bien performé. Au total, 83 classes sur les 99 ont un f1\_score non parfait, c’est-à-dire différent de 1, témoignant des faibles performances du modèle.
+\par
+Enfin, nous dressons la matrice de confusion qui montre toutes les erreurs de prédictions, en affichant les couples de classes où une classe prédite était différente de la classe réelle, avec le nombre d’occurrences.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{matrix_dt.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
+
+Sans forcément s’intéresser aux labels précis des classes, nous pouvons observer un grand nombre d’erreurs de prédictions étalées sur différentes classes, et se reproduisant parfois plusieurs fois pour certaines classes. Cette vue d’ensemble des mauvaises prédictions confirme les performances décevantes de notre modèle utilisant l’arbre de décision.
+\par
+Ces mauvaises performances peuvent s’expliquer par différents facteurs. Tout d’abord, on peut pointer le fait que notre jeu de données n’est sans doute pas le plus optimal, avec 99 classes et seulement 10 échantillons d’entraînement par classes, l’arbre de décision n’a pas sur construire un arbre différenciant de façon précise chacune des classes.
+\par
+Également, lors du processus de recherche d’hyperparamètres, nous avons dû le répéter plusieurs fois car les résultats étaient très fluctuants et il était possible d’avoir des valeurs d’hyperparamètres optimaux changeantes d’une exécution à l’autre.
+\par
+Enfin, les arbres de décisions ont en moyennes des performances plus basses que d’autres modèles de classification, et sont souvent utilisé dans le modèle de Random Forest, qui est le prochain modèle que nous présentons.
+
+{\textbf{\Large Conclusion :}}
+
+Pour conclure, le modèle d’arbre de décision n'a pas produit des performances convaincantes avec notre jeu de données.
+
+Les meilleurs hyperparamètres trouvés sont la profondeur maximale d’arbre illimitée (None), le nombre minimal d’échantillon pour division d’un nœud = 5, le critère de division ‘gini’ et enfin  le splitter de type ‘random’, même si pour ce dernier paramètre, il pourrait être correct d’utiliser le ‘best’.Le tout nous a permis d'obtenir une précision de $61.5\%$ sur les données d’entraînement et des valeurs de métriques de performances allant de 66 à $72\%$ sur les données de test. 
+
+L’analyse plus précise des hyperparamètres a mis en évidence le fait que l'absence de limite de profondeur semble préférable, ce qui suggère que permettre aux arbres de se développer sans restriction conduit à de meilleurs ajustements aux données d'entraînement.
+
+Pour le nombre minimal d'échantillons requis pour diviser un nœud, son augmentation a conduit à des performances plus faibles, s'expliquant par le fait qu'un nombre plus élevé d'échantillons est requis pour autoriser une division, limitant considérablement le modèle dans sa caractérisation des 99 classes. Les autres paramètres de critère qualité et de splitter n’ont pas d’impact significatif sur les performances.
+
+Enfin, les résultats de la matrice de confusion et des boxplots ont bien souligné la présence fréquente d'erreurs de prédiction, ce qui peut être attribué à la complexité du problème avec un grand nombre de classes et un faible nombre d'échantillons par classe.
+En résumé, bien que l'arbre de décision soit une approche populaire, les résultats obtenus soulignent les défis rencontrés dans notre contexte particulier. Une recherche d’hyperparamètres plus poussée, mais plus demande en temps de calculs, des données plus riches en nombre d’observations et des modèles plus sophistiqués comme Random Forest, pourraient être explorés pour améliorer les performances de classification.
+
 
 \subsection{Forêt aléatoire}
 
