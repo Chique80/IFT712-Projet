@@ -117,6 +117,105 @@ dans le dossier \textit{data}, dans le fichier \textit{train.csv}.
 
 \subsection{Classifieur KNN}
 
+Le premier classifieur que nous avons choisi de tester est le KNN.
+Il s'agit d'un classifieur qui prédit la classe d'une donnée selon
+les classes des données qui se trouve autour (qu'on appelle les voisins).
+L'avantage de ce classifieur est qu'il est simple et qu'il possède
+peu d'hyperparamètres. Il est donc assez facile à optimiser. Par contre,
+il peut avoir tendance à sur-apprendre les données d'entrainement.
+On s'attend à un bon résultat avec ce classifieur parce qu'on suppose
+que les feuilles doivent être significativement différentes d'une
+espèce à l'autre.
+
+Les hyperparamètres du KNN sont les suivants : 
+\begin{itemize}
+\item Le nombre de voisins 
+\item La pondération associée à chaque voisin : uniforme (sans pondération)
+ou selon la distance 
+\item La métrique de distance : euclidienne, manhattan ou cosinus
+\end{itemize}
+L'hyperparamètre le plus important est évidemment le nombre de voisin;
+c'est lui qui détermine vraiment la capacité du modèle.
+
+Les meilleurs hyperparamètres pour notre ensemble d'entrainement sont
+:
+\begin{itemize}
+\item Nombre de voisins : 4
+\item Pondération : selon la distance
+\item Métrique de distance : manhattan
+\end{itemize}
+La figure \ref{fig:Score-du-KNN} montre les résultats de l'entrainement
+pour les différentes valeurs d'hyperparamètres. On remarque une différence
+significative entre la distance de manhanttan et les deux autres,
+ce qui est plutôt inattendu. On remarque aussi qu'une pondération
+selon la distance est toujours meilleure qu'une pondération uniforme,
+ce qui est logique si nos données sont assez bien séparées.
+\begin{center}
+\begin{figure}
+\begin{centering}
+\includegraphics[scale=0.55]{images/knn_cross_validation}
+\par\end{centering}
+\caption{\label{fig:Score-du-KNN}Score du KNN selon les différents hyperparamètres}
+\end{figure}
+\par\end{center}
+
+On peut voir sur le graphique que le score est décroissant lorsqu'on
+utilise plus que 4 voisins, et ce peu importe la distance ou la pondération.
+Cette décroissance s'explique par le petit nombre de données dans
+chaque classe dans l'ensemble d'entrainement. Plus on considère de
+voisins, plus on considère de points qui n'appartiennent à la même
+classe.\\
+Tout cela montre que nos données semblent assez bien séparées et c'est
+pourquoi le classifieur KNN obtient un score aussi élevé.
+
+Cependant, pour être sûr des performances du modèle, nous devons l'évaluer
+sur l'ensemble de test. Pour chacune des métriques d'évaluation, voici
+la moyenne calculée pour l'ensemble des classes sur les données de
+test :
+\begin{itemize}
+\item Précision : 96,397 \textpm{} 9,469 \%
+\item Rappel : 95,286 \textpm{} 13,477 \%
+\item F1-score : 95,005 \textpm{} 13,409 \%
+\end{itemize}
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.6]{images/knn_evaluation}
+\par\end{centering}
+\caption{\label{fig:KNN-evaluation}Distribution des métriques d'évaluation
+pour le KNN}
+\end{figure}
+\par\end{center}
+
+La figure \ref{fig:KNN-evaluation} montre la distribution des classes
+pour chaque métrique. On peut voir que pour la grande majorité des
+classes, les prédictions sont parfaites (métrique à 1,0). Cependant,
+il y a quelques classes moins bonnes. On peut regarder sur quelles
+classes le modèle a fait des erreurs pour voir s'il y a une relation
+entre toutes les erreurs commises.
+
+La figure \ref{fig:KNN-matrice-confusion} montre une matrice de confusion
+des classes pour lesquelles le modèle a commis des erreurs. On ne
+remarque aucune relation parmi les erreurs commises. Il s'agit donc
+probablement de données pour lesquelles les caractéristiques sont
+moins distinctes.
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.55]{images/knn_matrice_confusion}
+\par\end{centering}
+\caption{\label{fig:KNN-matrice-confusion}Matrice de confusion des erreurs
+commises par le KNN}
+\end{figure}
+\par\end{center}
+
+\paragraph*{Conclusion}
+
+Le classifieur KNN est optimal lorsqu'on utilise 4 voisins, la distance
+de manhattan et une pondération des voisins selon la distance. Avec
+ces hyperparamètres, le modèle performe très bien (> 95\% pour chaque
+métrique d'évaluation) et ne semble donc ni sous-apprendre ni sur-apprendre.
+
 \subsection{Régression logistique}
 
 Le deuxième modèle que nous avons choisi d’utiliser est le modèle de régression logistique. Il s’agit une technique de modélisation statistique utilisée normalement pour prédire la probabilité d'appartenance à une classe binaire en fonction de variables indépendantes. Elle est couramment utilisée dans les problèmes de classification, tels que la prédiction de la catégorie d'appartenance d'un élément parmi deux classes distinctes.\\ 
