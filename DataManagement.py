@@ -93,7 +93,7 @@ class Dataset:
 
     def info(self) -> None:
         print("##### Informations #####")
-        print("  - Nb classes   :", self.nb_classes, "( Dim :", len(self.data.columns), ")")
+        print("  - Nb classes   :", self.nb_classes, "( Dim :", len(self.data.columns)-3, ")")
         print("  - Nb samples   :", len(self.data))
         print("     - Training  :", len(self.x_train), "(", len(self.x_train)/len(self.data)*100, "% )")
         print("     - Test      :", len(self.x_test), "(", len(self.x_test)/len(self.data)*100, "% )")
