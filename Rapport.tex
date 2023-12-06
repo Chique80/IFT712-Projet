@@ -42,11 +42,76 @@ Djibril Sene}
 
 \section{Méthodologie}
 
-\subsection{Structure du projet}
-
 \subsection{Jeu de données}
 
+Nous avons choisi le jeu de données de classification de feuilles
+disponible sur Kaggle\footnote{https://www.kaggle.com/c/leaf-classification}.
+Ce jeu de données contient 990 images de feuilles de 99 espèces différentes.
+De ces images ont été extraites 3 caractéristiques : la marge, la
+forme et la texture. Chaque caractéristique est donnée comme un vecteur
+de 64 dimensions, pour un total de 192 dimensions.
+
 \subsection{Méthodes d'évaluation}
+
+Nous avons choisi de tester les classifieurs suivants :
+\begin{itemize}
+\item Un classifieur KNN
+\item Un classifieur logistique
+\item Une machine à vecteur de support
+\item Un classifieur AdaBoost
+\item Un arbre de décision
+\item Une forêt aléatoire
+\end{itemize}
+Afin de bien évaluer les performances de chaque classifieur, nous
+avons séparé notre jeu de données en un ensemble d'entrainement et
+un ensemble de test. Puisque notre jeu de données contient très peu
+de données par classe, nous avons fait une séparation stratifiée.
+De cette façon, on est garanti d'avoir autant de données dans chaque
+classe. La figure \ref{fig:Distribution-des-classes} montre la différence
+entre une séparation non stratifiée et une séparation stratifiée.
+Cette différence dans la distribution des classes pourrait mener à
+des biais lors de l'entrainement ou de l'évaluation.
+
+\begin{figure}
+\begin{centering}
+\includegraphics[scale=0.3]{images/class_distribution_unstratified}\includegraphics[scale=0.3]{images/class_distribution_stratified}
+\par\end{centering}
+\centering{}\caption{\label{fig:Distribution-des-classes}Distribution des classes dans
+l'ensemble de test avec une séparation non stratifiée (à gauche) et
+stratifiée (à droite)}
+\end{figure}
+
+Tous les classifieurs ont été testés et entrainés sur les mêmes ensembles.
+Afin d'être sur d'avoir les performances optimales pour chaque modèle,
+nous avons fait une recherche d'hyperparamètres par validation croisée.
+Pour s'assurer d'avoir au moins une donnée par classe dans chaque
+pli, nous avons limité la validation croisée à seulement 5 plis.
+
+Chaque classifieur a été entrainé avec les meilleurs hyperparamètres
+trouvés puis testé sur notre ensemble de test. Nous évaluerons les
+performances des modèles sur l'ensemble de test avec les 3 métriques
+suivantes :
+\begin{itemize}
+\item - La précision : la proportion de données appartenant réellement à
+leur classe prédite 
+\item - Le rappel : la proportion des données bien classées (la justesse
+des prédictions pour une classe) 
+\item - Le f1-score : la moyenne harmonique de la précision et du rappel
+\end{itemize}
+Comme nous sommes dans une situation de classification multi-classes,
+on calcule ces métriques individuellement pour chaque classe. On peut
+ensuite calculer la moyenne sur l'ensemble des classes ou regarder
+la distribution des résultats pour chaque métrique. On devrait ainsi
+avoir une bonne idée des performances de chaque classifieur.
+
+\subsection{Structure du projet}
+
+Le code relatif à chaque classifieur se trouve dans des \textit{notebooks}
+différents. Nous avons regroupé les fonctions utilitaires communes
+à chaque \textit{notebook} dans le fichier \textit{DataManagement.py}.
+Ce fichier contient aussi la classe \texttt{Dataset} qui sert à la
+lecture et à la gestion du jeu de données. Le jeu de données se trouve
+dans le dossier \textit{data}, dans le fichier \textit{train.csv}.
 
 \section{Évaluation des résultats}
 
