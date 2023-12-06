@@ -291,6 +291,104 @@ En conclusion, la régression logistique s'est révélée être une approche rob
 
 \subsection{Machine à vecteurs de support}
 
+Notre troisième classifieur est la machine à vecteur de support. L'avantage
+de ce classifieur, c'est qu'il performe normalement très bien avec
+des données qui ont beaucoup de dimensions, ce qui est notre cas.
+On s'attend donc à de bon résultat.
+
+Les hyperparamètres du SVM sont les suivants :
+\begin{itemize}
+\item Un paramètre de régularisation (\texttt{C}) : plus il est grand, moins
+la régularisation est forte
+\item Le noyau : linéaire, gaussien, polynomial ou sigmoidal 
+\item Un paramètre gamma utilisé par les noyaux gaussien, polynomial et
+sigmoidal : soit \textit{scale}, soit \textit{auto}
+\end{itemize}
+L'hyperparamètre le plus important est évidemment le noyau. C'est
+le noyau qui détermine quelle genre de fonction le SVM pourra apprendre.
+On veut donc tester le plus de noyau possible pour être sûr de trouver
+le bon.
+
+Cependant, lorsqu'on utilise un noyau polynomial, on a un hyperparamètre
+supplémentaire : le degré. Comme rechercher le degré optimal en même
+temps que les autres hyperparamètres prendrait trop de temps, on l'a
+fait séparément et on a trouvé que le degré optimal est de 1.
+
+Les meilleurs hyperparamètres pour notre ensemble d'entrainement sont
+:
+\begin{itemize}
+\item Régularisation : 6,0
+\item Noyau : polynomial de degré 1
+\item Gamma : \textit{scale}
+\end{itemize}
+La figure \ref{fig:Score-du-SVM} montre les résultats de l'entrainement
+pour les différentes valeurs d'hyperparamètres. On voit bien que le
+type de noyau a un impact significatif sur les performances du modèle.
+Le noyau linéaire est le moins performant, ce qui est normal si on
+suppose que les données ne sont pas linéairement séparable. Les noyaux
+polynomial, gaussien et sigmoidal sont très similaires, mais le noyau
+sigmoidal est toujours moins performant.
+
+On remarque aussi que les performances du modèle atteignent un plateau
+à \texttt{C=2}. Au-delà de cette valeur, la différence de performance
+entre le noyau polynomial et le noyau gaussien n'est pas significative.
+Nous choisirons quand même le noyau polynomial pour la suite des tests.
+
+Finalement, le paramètre gamma ne semble pas avoir d'influence sur
+les performances. Lorsque gamma est à \textit{auto}, le modèle est
+toujours mauvais.
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.55]{images/svm_cross_validation}
+\par\end{centering}
+\caption{\label{fig:Score-du-SVM}Score du SVM selon les différents hyperparamètres}
+\end{figure}
+\par\end{center}
+
+Nous avons testé le modèle avec les hyperparamètres optimaux sur l'ensemble
+de test. Pour chacune des métriques d'évaluation, voici la moyenne
+calculée pour l'ensemble des classes :
+\begin{itemize}
+\item Précision : 95,522 \textpm{} 10,962 \%
+\item Rappel : 93,603 \textpm{} 15,560 \%
+\item F1-score : 93,271 \textpm{} 11,723 \%
+\end{itemize}
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.6]{images/svm_evaluation}
+\par\end{centering}
+\caption{\label{fig:SVM-evaluation}Distribution des métriques d'évaluation
+pour le SVM}
+\end{figure}
+\par\end{center}
+
+La figure \ref{fig:SVM-evaluation} montre la distribution des classes
+pour chaque métrique. Encore une fois, les prédictions sont parfaites
+(métrique à 1,0) pour la grande majorité des classes. Si on regarde
+la matrice de confusion des erreurs commises, figure \ref{fig:SVM-matrice-confusion},
+on ne remarque aucune relation particulière. Les erreurs sont réparties
+assez uniformément parmi les différentes classes.
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.55]{images/svm_matrice_confusion}
+\par\end{centering}
+\caption{\label{fig:SVM-matrice-confusion}Matrice de confusion des erreurs
+commises par le SVM}
+\end{figure}
+\par\end{center}
+
+\paragraph*{Conclusion}
+
+Le classifieur SVM est optimal lorsqu'on utilise un noyau polynomial
+de degré 1 avec un paramètre de régularisation de 6. Cependant, un
+noyau gaussien avec le même paramètre de régularisation a des performances
+presque identique. On ne peut donc pas vraiment dire si l'un est meilleur
+que l'autre. Avec ces hyperparamètres, le SVM performe très bien et
+ne semble ni sur-apprendre ni sous-apprendre.
+
 \subsection{Classifieur AdaBoost}
 
 \subsection{Arbre de décisions}
