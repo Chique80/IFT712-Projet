@@ -2,3 +2,6 @@ temp.ipynb
 template.ipynb
 /__pycache__/*
 /temp/*
+*.lyx
+*.lyx~
+_Rapport.tex
