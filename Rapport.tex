@@ -233,8 +233,8 @@ Après avoir effectué la recherche des meilleurs hyperparamètres, la meilleure
 Dans un premier temps, on remarque que la valeur de C est la plus élevée parmi celles présentes dans l’intervalle de recherche. Cela confirme les observations faites précédemment lors du processus de recherche des valeurs des hyperparamètres à tester. Sachant que C est l’inverse de la force de régularisation, cela signifie que moins la régularisation est forte, mieux notre modèle performe sur les données d’entraînement. Afin de constater l’importance de cet hyperparamètre par rapport aux autres, nous traçons les courbes représentant les différentes combinaisons d’hyperparamètres testés :
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{courbe_lr.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/courbe_lr.png}
+    \caption{Courbe de score du modèle Logistic Regression pour différents hyperparamètres}
     \label{fig:enter-label}
 \end{figure}
 
@@ -253,8 +253,8 @@ Pour réellement mesurer les performances du meilleur modèle sur l’ensemble d
 Nous traçons également les boxplots correspondants :
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{boxplot_lr.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/boxplot_lr.png}
+    \caption{Distribution des métriques d’évaluation pour le modèle Logistic Regression}
     \label{fig:enter-label}
 \end{figure}
 \par
@@ -267,8 +267,8 @@ Enfin, nous dressons la matrice de confusion qui montre toutes les erreurs de pr
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{matrix_lr.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/matrix_lr.png}
+    \caption{Matrice de confusion du modèle Logistic Regression}
     \label{fig:enter-label}
 \end{figure}
 \par
@@ -517,8 +517,8 @@ Pour la profondeur maximale des arbres, on constate que l'absence de limite de p
 On peut examiner les performances du modèle en considérant le score associé à cette limite de profondeur et évaluer l'influence des autres hyperparamètres sur ces résultats :
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{courbe_dt.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/courbe_dt.png}
+    \caption{Courbe de score du modèle Decision Tree pour différents hyperparamètres}
     \label{fig:enter-label}
 \end{figure}
 D’abord, nous pouvons rapidement observer que plus le nombre minimal d'échantillons requis dans un nœud pour qu’il soit divisé augmente, moins le modèle est performant. Il est assez simple d’expliquer cela, en effet si on augmente cette valeur, le modèle est contraint de créer des divisions dans les nœuds uniquement s'il y a un nombre relativement élevé d'échantillons dans ces nœuds. Cela peut conduire à un arbre de décision moins profond et plus généralisé, car les divisions ne sont autorisées que lorsque le modèle détecte des schémas plus forts dans les données. De plus, par rapport à notre jeu de donnée, cela peut clairement impacter les faibles différenciations pouvant exister entre certaines des 99 classes présentes, et donc faire chuter les performances du modèle. 
@@ -536,8 +536,8 @@ Pour réellement mesurer les performances du meilleur modèle sur l’ensemble d
    
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{boxplot\_dt.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/boxplot_dt.png}
+    \caption{Distribution des métriques d’évaluation pour le modèle Decision Tree}
     \label{fig:enter-label}
 \end{figure}
 
@@ -552,8 +552,8 @@ Enfin, nous dressons la matrice de confusion qui montre toutes les erreurs de pr
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{matrix_dt.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/matrix_dt.png}
+    \caption{Matrice de confusion du modèle Decision Tree}
     \label{fig:enter-label}
 \end{figure}
 
@@ -603,8 +603,8 @@ Afin de mieux visualiser l’importance de cet hyperparamètre ainsi que du nomb
 \par
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{courbe_rf.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/courbe_rf.png}
+    \caption{Courbe de score du modèle Random Forest pour différents hyperparamètres}
     \label{fig:enter-label}
 \end{figure}
 \par
@@ -621,8 +621,8 @@ Nous traçons également les boxplots correspondants :
 \par
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{boxplot_rf.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/boxplot_rf.png}
+    \caption{Distribution des métriques d’évaluation pour le modèle Random Forest}
     \label{fig:enter-label}
 \end{figure}
 \par
@@ -632,8 +632,8 @@ Il existe cependant des classes pour lesquelles le modèle a moins bien perform�
 Enfin, nous dressons la matrice de confusion qui montre toutes les erreurs de prédictions, en affichant les couples de classes où une classe prédite était différente de la classe réelle, avec le nombre d’occurrences.
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{matrix_rf.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.7\linewidth]{images/matrix_rf.png}
+    \caption{Matrice de confusion du modèle Random Forest}
     \label{fig:enter-label}
 \end{figure}
 Comme observé précédemment via les métriques de performances, nous voyons que les erreurs de prédictions sont très rares et ne sont pas concentrées sur une classe en particulier.
