@@ -391,6 +391,108 @@ ne semble ni sur-apprendre ni sous-apprendre.
 
 \subsection{Classifieur AdaBoost}
 
+Le quatrième classifieur que nous avons sélectionné pour évaluation est l'Adaboost.
+Il s'agit d'un modèle qui combine plusieurs classifieurs faibles pour former un ensemble robuste et performant.
+L'Adaboost accorde des poids différents aux données d'entraînement, mettant davantage l'accent sur celles 
+qui ont été mal classées par les classifieurs précédents. 
+Cela en fait un modèle adaptatif et capable de s'ajuster aux erreurs précédentes.
+
+L'avantage de l'Adaboost réside dans sa capacité à s'adapter à des ensembles de données complexes 
+sans nécessiter beaucoup d'ajustements d'hyperparamètres. 
+Cependant, il peut être sensible au bruit dans les données et à des valeurs aberrantes.
+
+Dans notre contexte, nous anticipons des performances prometteuses avec l'Adaboost, car il est bien adapté à la 
+classification de feuilles. Nous supposons que les caractéristiques distinctives des différentes 
+espèces de feuilles seront correctement exploitées par l'Adaboost, conduisant ainsi à des prédictions 
+précises et discriminantes
+
+
+Les hyperparamètres de l'Adaboost sont les suivants : 
+\begin{itemize}
+\item Le nombre d'estimateurs
+\item Le learning rate
+\item Le type d'estimateur ou classifieur faible
+\end{itemize}
+Les hyperparamètres les plus importants est évidemment le type d'estimateur et;
+c'est lui qui détermine vraiment la capacité du modèle.
+
+Les meilleurs hyperparamètres pour notre ensemble d'entrainement sont
+:
+\begin{itemize}
+\item Le nombre d'estimateurs: 64
+\item Le learning rate: 0.01
+\item Le type d'estimateur ou classifieur faible: ExtraTreesClassifier
+\end{itemize}
+La figure \ref{fig:Score-adaboost} montre les résultats de l'entrainement
+pour les différentes valeurs d'hyperparamètres. On remarque une différence
+significative entre le classifieur SVM (qui n'a pas été tracé due à ses pauvres performances) 
+et les deux autres.
+
+\begin{center}
+\begin{figure}
+\begin{centering}
+\includegraphics[scale=0.55]{images/adaboost_boxplot}
+\par\end{centering}
+\caption{\label{fig:Score-adaboost}Score de l'adaboost selon les différents hyperparamètres}
+\end{figure}
+\par\end{center}
+
+On peut voir sur le graphique que le score est différent en fonction du type d'estimateur
+et que learning rate n'influe pas grandement le résultat. Le nombre d'estimateur influence légérement les résultats.
+\\
+
+
+Nous avons évalué les performances du modèle sur l'ensemble de test en utilisant les hyperparamètres optimaux.
+Pour chaque métrique d'évaluation, la moyenne a été calculée en considérant l'ensemble des classes :
+\begin{itemize}
+\item Précision : 97,593 \textpm{} 8,368 \%
+\item Rappel :  96,633 \textpm{} 11,163 \%
+\item F1-score : 96,518 \textpm{} 8,737 \%
+\end{itemize}
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.6]{images/adaboost_evaluation}
+\par\end{centering}
+\caption{\label{fig:adaboost-evaluation}Distribution des métriques d'évaluation
+pour l'adaboost}
+\end{figure}
+\par\end{center}
+
+La figure \ref{fig:adaboost-evaluation} montre la distribution des classes
+pour chaque métrique. Étant donné le nombre élevé de classes (99), l'évaluation des performances pour 
+chaque classe individuelle peut rapidement devenir impraticable. Pour obtenir une vue d'ensemble, 
+nous analysons plutôt la moyenne des métriques à travers l'ensemble des classes. Globalement, 
+notre modèle démontre une performance robuste, manifestant à la fois une précision et une justesse élevées.
+
+Comme on peut le voir dans le boxplot, les prédictions sont parfaites (métriques à 1.0) 
+pour la grande majorité des classes.
+
+
+La figure \ref{fig:adaboost-matrice-confusion} montre une matrice de confusion
+des classes pour lesquelles le modèle a commis des erreurs. On ne
+remarque aucune relation parmi les erreurs commises. Il s'agit donc
+probablement de données pour lesquelles les caractéristiques sont
+moins distinctes.
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.55]{images/adaboost_matrice_confusion}
+\par\end{centering}
+\caption{\label{fig:adaboost-matrice-confusion}Matrice de confusion des erreurs
+commises par l'adaboost}
+\end{figure}
+\par\end{center}
+
+\paragraph*{Conclusion}
+
+Le classifieur adaboost est optimal lorsqu'on utilise un grand nombre d'estimateurs, et des classifieurs faibles
+adéquat. 
+Avec ces hyperparamètres, le modèle performe très bien (> 96.5\% pour chaque
+métrique d'évaluation) et ne semble donc ni sous-apprendre ni sur-apprendre.
+
+########################################################################################
+
 \subsection{Arbre de décisions}
 Le cinquième modèle que nous avons choisi d’utiliser est l'arbre de décision. Il s'agit d'une méthode de modélisation qui prend des décisions selon une structure arborescente. Les arbres de décision sont conçus pour résoudre des problèmes de classification avec plusieurs classes, comme dans notre cas. Cette approche est particulièrement adaptée pour diviser l'espace des caractéristiques en régions, en prenant des décisions basées sur des seuils dans les caractéristiques. Les arbres de décision sont largement utilisés dans la classification en raison de leur capacité à capturer des relations complexes entre les caractéristiques et la classe cible.
 \par
@@ -550,4 +652,20 @@ En conclusion, notre modèle Random Forest s’est montré très performant et e
 
 
 \section{Conclusion}
+
+\begin{center}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.6]{images/recap}
+\par\end{centering}
+\caption{\label{fig:adaboost-evaluation}tableau récapitulatif des performances globales des différents classifieurs
+}
+\end{figure}
+\par\end{center}
+
+Comme on peut le voir sur le tableau récapitulatif ci-dessus, la forêt aléatoire présente les meilleurs performances
+suivi de peu par l'adaboost pour notre jeu de données, l'arbre de décision lui n'est adapté. Cela dit, 
+chaque classifieurs possède ses forces et ses faibles et c'est à travers de la nature de nos données 
+que l'on doit chercher le plus optimal pour le problème de classification.
+
 \end{document}
