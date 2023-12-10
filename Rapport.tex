@@ -26,9 +26,6 @@
    \providecommand{\fg}{\ifdim\lastskip>\z@\unskip\fi~\frqq}%
 }
 
-
-
-
 \makeatother
 
 \usepackage{babel}
@@ -53,6 +50,24 @@
 \pagebreak{}
 
 \tableofcontents{}\pagebreak{}
+
+\section*{Contexte}
+
+L'objectif de ce projet a été de mettre en oeuvre et d'évaluer différentes
+méthodes de classification sur une base de données choisie. Ce rapport
+a pour but de présenter le travail effectué et les résultats obtenus.
+
+Au sein de celui-ci seront présentés les différents algorithmes utilisés,
+ainsi que nos choix d'hyperparamètres, des pratiques d'entrainements
+et les résultats obtenus couplés à leur analyse.
+
+Notre approche s'est concentrée sur l'optimisation des performances
+de chaque algorithme, en explorant différentes configurations d'hyperparamètres
+et en évaluant leur impact sur les résultats obtenus. Cette démarche
+a non seulement renforcé notre compréhension des mécanismes sous-jacents
+aux algorithmes, mais elle a également permis de sélectionner la solution
+la plus adaptée pour le problème de classification spécifique que
+nous avons abordé.
 
 \section{Méthodologie}
 
@@ -217,7 +232,7 @@ remarque aucune relation parmi les erreurs commises. Il s'agit donc
 probablement de données pour lesquelles les caractéristiques sont
 moins distinctes. 
 \begin{center}
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.55]{images/knn_matrice_confusion} 
 \par\end{centering}
